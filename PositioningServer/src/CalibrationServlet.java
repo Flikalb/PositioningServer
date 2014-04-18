@@ -27,6 +27,13 @@ public class CalibrationServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		
+		//reception of the mobile device request
+		
+		//send request to each access point for RSSI measurements with the mobile device mac address as parameter
+		
+		
+		
 	}
 
 	/**

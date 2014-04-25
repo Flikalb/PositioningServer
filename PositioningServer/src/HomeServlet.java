@@ -70,6 +70,28 @@ public class HomeServlet extends HttpServlet {
 		else {
 			System.out.println("Failed to make connection.");
 		}
+		
+		try {
+			st = con.createStatement();
+			int nb = st.executeUpdate("insert into accesspoint(mac_addr) values('123456789123456789')");
+		} catch (SQLException e) {
+			System.out.println("Insertion failed.");
+			e.printStackTrace();
+		}
+		
+		try {
+			st = con.createStatement();
+			rs=st.executeQuery("select * from accesspoint");
+			while(rs.next()) {
+				int id = rs.getInt("id");
+				String mac_addr = rs.getString("mac_addr");
+				System.out.println("Access point id : "+id+ " and mac address : "+mac_addr);
+				
+			}
+		}
+		catch(SQLException e) {
+			System.out.println("Query failed.");
+		}
 
 		if(con!=null) {
 			try {
@@ -79,7 +101,6 @@ public class HomeServlet extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-
 
 	}
 

@@ -3,13 +3,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-
 public class RSSIRequestThread extends Thread {
 
 	private String mobileMacAddress;
 	private String apIpAddress;
-	private String rssiMeasurement;
-	public String nbMeasures;
+	private Double rssiMeasurement;
+	public Integer nbMeasures;
 
 	public RSSIRequestThread(String name,String mobileMacAddress, String apIpAddress) {
 		super(name);
@@ -19,6 +18,7 @@ public class RSSIRequestThread extends Thread {
 		nbMeasures = null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public void run() {
 		String url = "http://"+apIpAddress+"/";
 
@@ -45,9 +45,27 @@ public class RSSIRequestThread extends Thread {
 			while ((inputLine = in.readLine()) != null) {
 				response+=inputLine;
 			}
+			
 			in.close();
 			
+			this.stop();
 			
+			/*
+			 * {”ap”: ”ap:ap:ap:ap:ap:ap”,”rssi”:[{”xx:xx:xx:xx:xx:xx”:”val”,”samples”:”nb”}]}
+			 * {”ap”: ”ap:ap:ap:ap:ap:ap”,”rssi”:[]}
+			 */
+			
+			if(response!="") {
+				response=response.substring(33,response.length()-1);
+				String[] extract = null;
+				if(!response.equals("[]")) {
+					extract = response.split("\"");
+				}
+				if(extract.length == 4) {
+					this.rssiMeasurement = Double.parseDouble(extract[1]);
+					this.nbMeasures = Integer.parseInt(extract[3]);
+				}
+			}
 			
 		}
 		catch(Exception e){}
@@ -56,11 +74,11 @@ public class RSSIRequestThread extends Thread {
 
 	}
 
-	public String getRSSIMeasurement () {
+	public Double getRSSIMeasurement () {
 		return this.rssiMeasurement;
 	}
 	
-	public String getNBMeasurement() {
+	public Integer getNBMeasurement() {
 		return this.nbMeasures;
 	}
 }
